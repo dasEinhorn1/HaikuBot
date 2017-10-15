@@ -1,2 +1,2 @@
 # ChefBot
-A RoboChef twitterbot who wants so bad to be successful
+A RoboChef twitterbot who just wants to be successful
