@@ -1,0 +1,25 @@
+{
+  "name": "starshipbot",
+  "version": "1.0.0",
+  "description": "A twitterbot which runs through procedurally-generated futuristic space missions",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dasEinhorn1/StarshipCaptainBot.git"
+  },
+  "author": "Adam Hayward <adam.hayward@gatech.edu> (http://adamhayward.me)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dasEinhorn1/StarshipCaptainBot/issues"
+  },
+  "homepage": "https://github.com/dasEinhorn1/StarshipCaptainBot#readme",
+  "dependencies": {
+    "mongodb": "^2.2.31",
+    "twit": "^2.2.9"
+  },
+  "devDependencies": {},
+  "keywords": []
+}
