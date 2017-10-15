@@ -1,2 +1,2 @@
-# StarshipCaptainBot
-A twitterbot which posts captains logs from a procedurally-generated space adventure
+# ChefBot
+A robo-chef Twitter-bot who just wants to be successful
