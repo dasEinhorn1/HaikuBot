@@ -91,6 +91,7 @@ const recipesToString = function(recipes) {
   });
 }
 
-dummySearch("chicken_fix.json", (recipes) => {
-  console.log(recipesToString(recipes))
-});
+module.exports = {
+  recipeToString: recipeToString,
+  dummySearch: dummySearch,
+};
