@@ -22,7 +22,7 @@ module.exports = {
   isUpdated: isUpdated
 }
 
-if (secrets != undefined) {
+if (false && secrets != undefined) {
   module.exports.twitter = secrets.twitter;
   module.exports.wordnik = secrets.wordnik;
 } else {
