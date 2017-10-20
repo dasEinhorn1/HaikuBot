@@ -7,12 +7,6 @@ const WORD_LINK = "http://api.wordnik.com:80/v4/word.json/";
 const WORDS_LINK = "http://api.wordnik.com:80/v4/words.json/";
 const INCLUDE_PARTS = "noun,verb,article,adverb,adjective";
 const EXCLUDE_PARTS = "family-name,given-name,affix,suffix,abbreviation";
-// "http://api.wordnik.com:80/v4/word.json/"
-// "stupid/"
-// "relatedWords?useCanonical=false"
-// "&relationshipTypes=synonym"
-// "&limitPerRelationshipType=10000"
-// "&api_key="
 
 Array.prototype.pick = function() {
   let picked = this[Math.floor(Math.random() * this.length)];
