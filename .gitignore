@@ -1,6 +1,8 @@
 # api keys
 secrets.js
 .env
+*.zip
+Adam_Hayward_Project_3
 
 # Logs
 logs
