@@ -1,4 +1,17 @@
 // Put your own Twitter App keys here. See README.md for more detail.
+var updated = true;
+
+var isUpdated = function() {
+  return updated;
+}
+
+var setUpdated = function(b) {
+  if (b === true) {
+    updated = true;
+  } else {
+    updated= false
+  }
+}
 module.exports = {
   twitter : {
     consumer_key:         'TogQqdwHks9x7OVB4NiKqnbbx',
@@ -14,5 +27,7 @@ module.exports = {
   wordnik: '7c69e6ec42b84b75a10050db2c302d806a45901f01cc35abf',
   //wordnik: 'a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5',
   FIXTURE: 'fix.json',
-  DEBUG: false
+  DEBUG: false,
+  setUpdated: setUpdated,
+  isUpdated: isUpdated
 }

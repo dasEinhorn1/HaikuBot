@@ -13,20 +13,21 @@ const EXCLUDE_PARTS = "family-name,given-name,affix,suffix,abbreviation";
 // "&relationshipTypes=synonym"
 // "&limitPerRelationshipType=10000"
 // "&api_key="
+
 Array.prototype.pick = function() {
   let picked = this[Math.floor(Math.random() * this.length)];
   return picked;
 }
 
-let getRandomWords = function(count=30, included="", excluded="",
-    length={min:1, max:-1}) {
+let getRandomWords = function(count=30, included=INCLUDE_PARTS,
+    excluded=EXCLUDE_PARTS, length={min:1, max:-1}) {
   let options = {
     uri: WORDS_LINK + "randomWords?",
     qs: {
-      hasDictionaryDef: 'false',
-      minCorpusCount: 0,
+      hasDictionaryDef: 'true',
+      minCorpusCount: 1000,
       maxCorpusCount: -1,
-      minDictionaryCount: 1,
+      minDictionaryCount: 2,
       maxDictionaryCount: -1,
       minLength: length.min,
       maxLength: length.max,
@@ -59,25 +60,6 @@ let sortBySyllables = function(wordList) {
   return bySyll;
 }
 
-let makeHaiku = function (sortedWords) { // words sorted by number of syllables
-  let haiku = "";
-  let form = [5,7,5];
-  for (let i = 0; i < form.length; i++) {
-    syllablesLeft = form[i];
-    while (syllablesLeft > 0) {
-      let currentSyll = Math.floor(Math.random() * syllablesLeft) + 1;
-      if (sortedWords[currentSyll] === undefined) {
-        haiku += generator.randword(currentSyll) + " ";
-      } else {
-        haiku += sortedWords[currentSyll].pick() + " ";
-      }
-      syllablesLeft -= currentSyll;
-    }
-    haiku += "\n";
-  }
-  return haiku;
-}
-
 let getSynonyms = function(word, count = 30) {
   let options = {
     uri: WORD_LINK + word + "/relatedWords",
@@ -99,19 +81,49 @@ var getRandomSynonym = function(word, count = 100) {
   return getSynonyms(word, count)
     .then(body => {
       return pick(body[0].words);
-    });
+  });
 }
 
-let haikuGenerator = function() {
-  let haiku = getRandomWords(300, INCLUDE_PARTS, EXCLUDE_PARTS)
-    .then(wordList => {
-      wordList = wordList.map(w => w.word);
-      return sortBySyllables(wordList);
-    })
-    .then(sortedWords => makeHaiku(sortedWords));
-  return haiku;
+let generateCorpus = function(wordList) {
+  /*
+    [
+      {
+        word: "word"
+        associated: [],
+        rhymes: [],
+        synonyms: []
+      },
+      1: {...}
+    ]
+  */
+  wordList.map(w => {
+    return new Promise( resolve => {
+      generateAssociatedWords(w).then( associated => {
+        console.log(associated);
+      });
+    });
+  });
+}
+
+let generateAssociatedWords = function(word) {
+  console.log(word);
+  let options = {
+    uri: WORD_LINK + word + "/relatedWords",
+    qs: {
+      useCanonical: 'false',
+      relationshipTypes: 'same-context',
+      limitPerRelationshipType: 1000,
+      api_key: W_KEY
+    },
+    headers: {
+      'User-Agent': 'Request-Promise'
+    },
+    json: true
+  }
+  return rp(options);
 }
 
 module.exports = {
-  haikuGenerator: haikuGenerator
+  getRandomWords: getRandomWords,
+  sortBySyllables: sortBySyllables
 }

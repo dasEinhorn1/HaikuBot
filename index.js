@@ -1,10 +1,10 @@
 // Our Twitter library
 var Twit = require('twit');
-var Word = require('./wordnik.js')
+const H = require('./haiku.js');
 // We need to include our configuration file
 var T = new Twit(require('./config.js').twitter);
 var DEBUG = require('./config.js').DEBUG;
-
+var updated = function() {return require('./config.js').isUpdated()};
 function tweet(text) {
 	if (DEBUG) {
 		console.log(text);
@@ -19,7 +19,6 @@ function tweet(text) {
 
 function validateTweet(text) {
   let charsLeft = text.length - 140;
-	console.log(charsLeft);
 	return text.length > 0;
 }
 
@@ -29,7 +28,21 @@ function safeTweet(text) {
 	return tweet(text);
 }
 
-Word.haikuGenerator().then(haiku => safeTweet(haiku));
-setInterval(function() {
-	Word.haikuGenerator().then(haiku => safeTweet(haiku));
-}, .5 * 1000 * 60 * 60);
+function updatedVersionTweet() {
+	if (!updated()) {
+		return;
+	} else {
+		return tweet(H.getRandomUpdatePhrase());
+		require('./config').setUpdated(DEBUG);
+	}
+}
+
+updatedVersionTweet()
+
+setTimeout(() => H.haikuGenerator().then(haiku => safeTweet(haiku)), 6000);
+
+if (!DEBUG){
+	setInterval(function() {
+		H.haikuGenerator().then(haiku => safeTweet(haiku));
+	}, .5 * 1000 * 60 * 60);
+}
