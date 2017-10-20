@@ -1,5 +1,6 @@
 # api keys
 secrets.js
+.env
 
 # Logs
 logs

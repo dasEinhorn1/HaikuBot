@@ -17,9 +17,20 @@ var setUpdated = function(b) {
   }
 }
 module.exports = {
-  twitter : (secrets) ? secrets.twitter : JSON.parse(process.env.TWITTER_KEYS),
-  wordnik: (secrets) ? secrets.wordnik : process.env.WORDNIK_KEYS,
-  DEBUG: true,
+  DEBUG: false,
   setUpdated: setUpdated,
   isUpdated: isUpdated
+}
+
+if (secrets != undefined) {
+  module.exports.twitter = secrets.twitter;
+  module.exports.wordnik = secrets.wordnik;
+} else {
+  module.exports.twitter = {
+    consumer_key: process.env.TWITTER_C_KEY,
+    consumer_secret:process.env.TWITTER_C_SECRET,
+    access_token:process.env.TWITTER_ACCESS_TOKEN,
+    access_token_secret:  process.env.TWITTER_ACCESS_TOKEN_SECRET
+  };
+  module.exports.wordnik = process.env.WORDNIK_KEY;
 }
