@@ -53,7 +53,8 @@ let haikuGenerator = function() {
       wordList = wordList.map(w => w.word);
       return W.sortBySyllables(wordList);
     })
-    .then(sortedWords => makeHaiku(sortedWords));
+    .then(sortedWords => makeHaiku(sortedWords))
+    .catch(reason => console.log(reason));
   return haiku;
 }
 
