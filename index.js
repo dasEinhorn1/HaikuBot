@@ -1,6 +1,6 @@
 // Our Twitter library
 var Twit = require('twit');
-var Q = require('./quote.js')
+var Word = require('./wordnik.js')
 // We need to include our configuration file
 var T = new Twit(require('./config.js').twitter);
 var DEBUG = require('./config.js').DEBUG;
@@ -25,10 +25,11 @@ function validateTweet(text) {
 
 function safeTweet(text) {
 	if (text == undefined) throw "Tweet is undefined"
-	if (!validateTweet(text)) throw "Tweet is too long. " + text.length + " chars" ;
+	if (!validateTweet(text)) throw "Tweet is too long " + text.length + " chars";
 	return tweet(text);
 }
 
-var tweetQuote = function(q) {
-	return safeTweet(Q.stringQuote(q));
-}
+Word.haikuGenerator().then(haiku => safeTweet(haiku));
+setInterval(function() {
+	Word.haikuGenerator().then(haiku => safeTweet(haiku));
+}, .5 * 1000 * 60 * 60);

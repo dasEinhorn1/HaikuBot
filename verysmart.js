@@ -8,7 +8,7 @@ let getSmartPost = function() {
 let giveSmartAnswer = function(question) {
   // gives a 'smart' answer to a question
   tokens = question.split(' ');
-  for (let i = 0; i < tokens.length; i++)
+  
 }
 
 let getSmartGreeting = function() {
