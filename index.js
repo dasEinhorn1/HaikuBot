@@ -76,8 +76,7 @@ function updatedVersionTweet() {
 }
 
 //updatedVersionTweet()
-
-setTimeout(() => H.haikuGenerator().then(haiku => safeTweet(haiku)), 6000);
+H.haikuGenerator().then(haiku => safeTweet(haiku));
 
 if (!DEBUG){
 	setInterval(function() {
