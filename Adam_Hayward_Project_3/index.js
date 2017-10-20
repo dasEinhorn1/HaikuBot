@@ -49,9 +49,8 @@ function tweet(text) {
 	}
 	T.post('statuses/update',
 					{ status: text },
-		function(err, data, response) {
-			console.log("tweeted");
-			console.log(err);
+					function(err, data, response) {
+						console.log(err);
 	});
 }
 
