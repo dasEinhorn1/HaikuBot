@@ -121,13 +121,13 @@ var generateCorpus = function(wordList) {
 var getAdjectives = function(count=100) {
   return getRandomWords(count, "adjective", "proper-noun", {max:8, min: 3})
     .then(adjs => {
-      return words.filter(adj => {
+      return adjs.filter(adj => {
         return !/^[A-Z]/.test(adj.word);
       });
     });
 }
 
-var getNouns = function(count=1000, length = 10) {
+var getNouns = function(count=1000, length = 15) {
   return getRandomWords(count, "noun", "verb", {max:length, min: 3}, 10000)
     .then(nouns => {
       return nouns.filter(noun => {
@@ -136,15 +136,15 @@ var getNouns = function(count=1000, length = 10) {
     });
 }
 
-var getVerbs = function(count=1000, length = 8) {
+var getVerbs = function(count=1000, length = 15) {
   return getRandomWords(count, "verb", "noun", {max:length, min: 2}, 10)
     .then(verbs => {
       return verbs;
     });
 }
 
-var getAdverbs = function(count=1000, length=8) {
-  return getRandomWords(count, "adverb", "noun", {max:length, min: 2}, 10)
+var getAdverbs = function(count=1000, length=15) {
+  return getRandomWords(count, "adverb", "noun", {max:length, min: 2}, 10000)
     .then(adverbs => {
       return adverbs;
     });
@@ -176,6 +176,6 @@ var generateAssociatedWords = function(word) {
   return rp(options);text
 }
 module.exports = {
-  getRandomWords, sortBySyllables, generator, getVerbs, getAdverbs,
-  syllabizeWords
+  getRandomWords, sortBySyllables, generator, getVerbs, getAdverbs, getNouns,
+  getAdjectives, syllabizeWords
 }
