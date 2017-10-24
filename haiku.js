@@ -178,19 +178,17 @@ var makeHaiku = function (sortedWords, pos={}) { // words sorted by number of sy
   return haiku;
 }
 
-let haikuGenerator = function(pos) {
-  let haiku = W.getRandomWords(300, W.INCLUDE_PARTS, W.EXCLUDE_PARTS)
-    .then(wordList => {
-      wordList = wordList.map(w => w.word);
-      return W.sortBySyllables(wordList);
-    })
-    .then(sortedWords => makeHaiku(sortedWords, pos))
-    .catch(reason => console.log(reason));
-  return haiku;
+let haikuGenerator = function() {
+  return updatePartsOfSpeech()
+    .then( pos => {
+      return W.getRandomWords(300, W.INCLUDE_PARTS, W.EXCLUDE_PARTS)
+        .then(wordList => {
+          wordList = wordList.map(w => w.word);
+          return W.sortBySyllables(wordList);
+        })
+        .then(sortedWords => makeHaiku(sortedWords, pos))
+  });
 }
-updatePartsOfSpeech()
-  .then((pos) => haikuGenerator(pos))
-  .then(h => console.log(h));
 
 module.exports = {
   haikuGenerator, getRandomUpdatePhrase
