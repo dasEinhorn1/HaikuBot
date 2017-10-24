@@ -1,7 +1,7 @@
 // Put your own Twitter App keys here. See README.md for more detail.
 var secrets = undefined;
 try {
-  require('./secrets.js');
+  secrets = require('./secrets.js');
 } catch(e) {}
 var updated = true;
 
@@ -22,7 +22,7 @@ module.exports = {
   isUpdated: isUpdated
 }
 
-if (false && secrets != undefined) {
+if (secrets != undefined) {
   module.exports.twitter = secrets.twitter;
   module.exports.wordnik = secrets.wordnik;
 } else {

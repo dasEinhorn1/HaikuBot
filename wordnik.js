@@ -13,15 +13,15 @@ Array.prototype.pick = function() {
   return picked;
 }
 
-let getRandomWords = function(count=30, included=INCLUDE_PARTS,
-    excluded=EXCLUDE_PARTS, length={min:1, max:-1}) {
+var getRandomWords = function(count=30, included=INCLUDE_PARTS,
+    excluded=EXCLUDE_PARTS, length={min:1, max:-1}, corpFreq=1000, dictReq=2) {
   let options = {
     uri: WORDS_LINK + "randomWords?",
     qs: {
       hasDictionaryDef: 'true',
-      minCorpusCount: 1000,
+      minCorpusCount: corpFreq,
       maxCorpusCount: -1,
-      minDictionaryCount: 2,
+      minDictionaryCount: dictReq,
       maxDictionaryCount: -1,
       minLength: length.min,
       maxLength: length.max,
@@ -42,7 +42,26 @@ let getRandomWords = function(count=30, included=INCLUDE_PARTS,
   return rp(options);
 }
 
-let sortBySyllables = function(wordList) {
+var getSyllables = function(word) {
+  if (false) {
+    //TODO check database for corrections
+  }
+  return syllable(word);
+}
+
+var syllabizeWords = function(words) {
+  let syllables = {};
+  for (let word of words) {
+    let s = getSyllables(word.word);
+    if (syllables[s] === undefined) {
+      syllables[s] = [];
+    }
+    syllables[s].push(word);
+  }
+  return syllables;
+}
+
+var sortBySyllables = function(wordList) {
   let bySyll = {};
   for (let word of wordList) {
     let s = syllable(word);
@@ -54,7 +73,7 @@ let sortBySyllables = function(wordList) {
   return bySyll;
 }
 
-let getSynonyms = function(word, count = 30) {
+var getSynonyms = function(word, count = 30) {
   let options = {
     uri: WORD_LINK + word + "/relatedWords",
     qs: {
@@ -75,10 +94,10 @@ var getRandomSynonym = function(word, count = 100) {
   return getSynonyms(word, count)
     .then(body => {
       return pick(body[0].words);
-  });
+    });
 }
 
-let generateCorpus = function(wordList) {
+var generateCorpus = function(wordList) {
   /*
     [
       {
@@ -99,7 +118,47 @@ let generateCorpus = function(wordList) {
   });
 }
 
-let generateAssociatedWords = function(word) {
+var getAdjectives = function(count=100) {
+  return getRandomWords(count, "adjective", "proper-noun", {max:8, min: 3})
+    .then(adjs => {
+      return words.filter(adj => {
+        return !/^[A-Z]/.test(adj.word);
+      });
+    });
+}
+
+var getNouns = function(count=1000, length = 10) {
+  return getRandomWords(count, "noun", "verb", {max:length, min: 3}, 10000)
+    .then(nouns => {
+      return nouns.filter(noun => {
+        return !/^[A-Z]/.test(noun.word);
+      });
+    });
+}
+
+var getVerbs = function(count=1000, length = 8) {
+  return getRandomWords(count, "verb", "noun", {max:length, min: 2}, 10)
+    .then(verbs => {
+      return verbs;
+    });
+}
+
+var getAdverbs = function(count=1000, length=8) {
+  return getRandomWords(count, "adverb", "noun", {max:length, min: 2}, 10)
+    .then(adverbs => {
+      return adverbs;
+    });
+}
+
+var getPrepositions = function(count=30, length=8) {
+  return getRandomWords(count, "preposition", "", {max:length, min: 2},
+    10000, 50)
+    .then(preps => {
+      return preps;
+    });
+}
+
+var generateAssociatedWords = function(word) {
   console.log(word);
   let options = {
     uri: WORD_LINK + word + "/relatedWords",
@@ -114,10 +173,9 @@ let generateAssociatedWords = function(word) {
     },
     json: true
   }
-  return rp(options);
+  return rp(options);text
 }
-
 module.exports = {
-  getRandomWords: getRandomWords,
-  sortBySyllables: sortBySyllables
+  getRandomWords, sortBySyllables, generator, getVerbs, getAdverbs,
+  syllabizeWords
 }
