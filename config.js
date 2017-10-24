@@ -17,7 +17,7 @@ var setUpdated = function(b) {
   }
 }
 module.exports = {
-  DEBUG: true,
+  DEBUG: process.env.DEBUG != 0,
   setUpdated: setUpdated,
   isUpdated: isUpdated
 }
