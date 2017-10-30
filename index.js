@@ -172,38 +172,39 @@ function hoursToMs(hours) {
 	return hours * 1000 * 60 * 60;
 }
 
+function takeRandomAction(history) {
+	let choice = Math.floor(Math.random() * 7);
+	// let choice = 0;
+	console.log(choice);
+	switch (choice) {
+		case 0:
+		case 1:
+		case 2:
+			H.haikuGenerator(history)
+			.then(haiku => safeTweet(haiku))
+			.catch(reason => {console.log(reason); clearInterval()});
+			break;
+		case 3:
+		case 4:
+			respondToMention(history)
+			.then(history => updateHistory(history))
+			.catch(err => {console.log(err); clearInterval()});
+			break;
+		case 5:
+		case 6:
+			retweetLatest(history)
+			.then(history => updateHistory(history))
+			.catch(err => {console.log(err); clearInterval()});
+			break;
+		default:
+			console.log("Error");
+			break;
+	}
+}
+
 var main = function(history) {
-	//if (!DEBUG){
-		setInterval(() => {
-			// let choice = Math.floor(Math.random() * 7);
-			let choice = 0;
-			console.log(choice);
-			switch (choice) {
-				case 0:
-				case 1:
-					H.haikuGenerator(history)
-					.then(haiku => safeTweet(haiku))
-					.catch(reason => {console.log(reason); clearInterval()});
-					break;
-				case 2:
-				case 3:
-					respondToMention(history)
-					.then(history => updateHistory(history))
-					.catch(err => {console.log(err); clearInterval()});
-					break;
-				case 4:
-				case 5:
-				case 6:
-					retweetLatest(history)
-					.then(history => updateHistory(history))
-					.catch(err => {console.log(err); clearInterval()});
-					break;
-				default:
-					console.log("Error");
-					break;
-			}
-		}, 10000);
-	//}
+	takeRandomAction(history);
+	setInterval(() => takeRandomAction(history), hoursToMs(1));
 	return history;
 }
 
