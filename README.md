@@ -2,20 +2,20 @@
 A Twitter-bot who just wants to be a successful poet
 
 ## To Do's
-Add rt haiku with rating
-	+ I have the rating system in place
-	+ I need to be able to retweet, and I need to decide which ones I should retweet.
-		- I will probably just rt a random one based on his examples
-		- Otherwise I will rt the most popular ones
-Add respond to haiku with rating
-	+ write encouraging response messages
-	+ rate their haiku
-	- tell whether something is a haiku?
-		- at least know if something is *NOT* a haiku
-Add word filters to ensure haikus aren't tasteless
-	- filter out all proper-nouns
-	- filter out all obscenities
-	- add additional word filters for nonsensical/poor words
+1. Add rt haiku with rating  
+    * I have the rating system in place  
+    * I need to be able to retweet, and I need to decide which ones I should retweet.  
+      * I will probably just rt a random one based on his examples  
+      * Otherwise I will rt the most popular ones  
+2. Add respond to haiku with rating
+    * write encouraging response messages  
+    * rate their haiku  
+      * tell whether something is a haiku?  
+      * at least know if something is _NOT_ a haiku  
+3. Add word filters to ensure haikus aren't tasteless
+    * filter out all proper-nouns  
+    * filter out all obscenities  
+    * add additional word filters for nonsensical/poor words  
 
 ## Project Statement:
 Haiku-Bot is a twitter bot who just wants to get good at writing avant-garde haikus.
