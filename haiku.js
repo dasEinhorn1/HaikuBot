@@ -5,9 +5,88 @@ update_status_sayings = [
   "Notice anything?\nI have just been updated\nAlways improving!",
 ];
 
+nice_synonyms = [
+  "nice","great","cool", "fine", "grand"
+]
+
+haiku_complements = [
+  () => {return "What a " + nice_synonyms.pick()},
+  () => {return "I love that"},
+  () => {return "Pretty " + nice_synonyms.pick()},
+  () => {return "Interesting"}
+];
+
 Array.prototype.pick = function() {
   let picked = this[Math.floor(Math.random() * this.length)];
   return picked;
+}
+
+var scoreHaiku = function(text="") {
+  let lines = [];
+  let form = [5, 7, 5];
+  let score = 0; // expected score will be 34 - 17 per syll, 5 per 1st/3rd line, 7 for 2nd
+  // prefer to split lines by /
+  if (text.count('/') > 1) {
+    lines = text.split("/");
+  // if there is no /, then split by \n
+  } else if (text.count("\n") > 1) {
+    lines = text.split("\n");
+  // if there is no \n, then ignore lines and look for total syllable counts
+  } else {
+    lines = [text];
+  }
+  score += 3;
+  score -= Math.min(Math.abs(lines.length - 3)); // for each line counted over or missing
+  let i = 0;
+  let totalSyllables = 0;
+  for (let line of lines) {
+    let sylls = W.countSyllables(line.trim());
+    score += form[i]
+    score -= Math.abs(sylls - form[i]);
+    totalSyllables += sylls;
+    i++;
+  }
+  score += 17;
+  score -= Math.abs(totalSyllables - 17);
+  return score;
+}
+
+var haikuScoreToPercentage = function(score) {
+  return Math.ceil(100 * score / 37);
+}
+
+var haikuScoreToText = function(score) {
+  score = haikuScoreToPercentage(score);
+  var rating = "Who even needs rules?";
+  if (score === 100) {
+    rating = "Haiku Supreme";
+  } else if (score >= 90) {
+    rating = "Haiku Deluxe";
+  } else if (score >= 75) {
+    rating = "A Bit Offbeat";
+  } else if (score >= 50) {
+    rating = "Non-Conformist";
+  } else if (score >= 25) {
+    rating = "Avant-Garde";
+  }
+  return rating;
+}
+
+var getEncouragement = function() {
+  return "Keep up the " + nice_synonyms.pick() + " work!";
+}
+
+var haikuScoreTweetText = function(score) {
+  let responseHaiku = "";
+  responseHaiku += haiku_complements.pick()() + " haiku\n";
+  responseHaiku += "My rating: " + haikuScoreToText(score) + "\n";
+  responseHaiku += getEncouragement();
+  return responseHaiku;
+}
+
+var respondToHaiku = function(text) {
+  console.log("RESPONDING TO " + text);
+  return haikuScoreTweetText(scoreHaiku(text));
 }
 
 var getRandomUpdatePhrase = function() {
@@ -99,47 +178,47 @@ var makeLineByRandom = function({wordList, syllLeft, line = "", used = {}}) {
     return makeLineByRandom(updates);
 }
 
-var updateVerbs = function(pos={}) {
+var updateVerbs = function(pos={}, history) {
   return W.getVerbs(2500)
-    .then(vs => W.syllabizeWords(vs))
+    .then(vs => W.syllabizeWords(vs, history))
     .then(vs => {
       pos.verbs = vs;
       return pos;
     })
 }
 
-var updateAdverbs = function(pos={}) {
+var updateAdverbs = function(pos={}, history) {
   return W.getAdverbs(2500, 15)
-    .then(avs => W.syllabizeWords(avs))
+    .then(avs => W.syllabizeWords(avs, history))
     .then(avs => {
       pos.adverbs = avs;
       return pos;
     });
 }
 
-var updateNouns = function(pos={}) {
+var updateNouns = function(pos={}, history) {
   return W.getNouns(1500)
-    .then(nouns => W.syllabizeWords(nouns))
+    .then(nouns => W.syllabizeWords(nouns, history))
     .then(nouns => {
       pos.nouns = nouns;
       return pos;
     });
 }
 
-var updateAdjectives = function(pos={}) {
+var updateAdjectives = function(pos={}, history) {
   return W.getAdjectives(1500)
-    .then(adjs => W.syllabizeWords(adjs))
+    .then(adjs => W.syllabizeWords(adjs, history))
     .then(adjs => {
       pos.adjectives = adjs;
       return pos;
     });
 }
 
-var updatePartsOfSpeech = function() {
-  return updateVerbs()
-    .then(pos => updateAdverbs(pos))
-    .then(pos => updateNouns(pos))
-    .then(pos => updateAdjectives(pos));
+var updatePartsOfSpeech = function(history) {
+  return updateVerbs({}, history)
+    .then(pos => updateAdverbs(pos, history))
+    .then(pos => updateNouns(pos, history))
+    .then(pos => updateAdjectives(pos, history));
 }
 
 var makeHaiku = function (sortedWords, pos={}) { // words sorted by number of syllables
@@ -178,18 +257,18 @@ var makeHaiku = function (sortedWords, pos={}) { // words sorted by number of sy
   return haiku;
 }
 
-let haikuGenerator = function() {
-  return updatePartsOfSpeech()
+let haikuGenerator = function(history) {
+  return updatePartsOfSpeech(history)
     .then( pos => {
-      return W.getRandomWords(300, W.INCLUDE_PARTS, W.EXCLUDE_PARTS)
+      return W.getRandomWords(400, W.INCLUDE_PARTS, W.EXCLUDE_PARTS)
         .then(wordList => {
-          wordList = wordList.map(w => w.word);
-          return W.sortBySyllables(wordList);
+          wordList = wordList.map(w => w.word)
+          return W.sortBySyllables(wordList, history);
         })
         .then(sortedWords => makeHaiku(sortedWords, pos))
   });
 }
 
 module.exports = {
-  haikuGenerator, getRandomUpdatePhrase
+  haikuGenerator, getRandomUpdatePhrase, respondToHaiku
 }
