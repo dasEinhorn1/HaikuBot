@@ -18,6 +18,7 @@ var setUpdated = function(b) {
 }
 module.exports = {
   DEBUG: (process.env.DEBUG === undefined) ? true : process.env.DEBUG != 0,
+  INTERVAL: (process.env.DEBUG === undefined) ? 1 : process.env.INTERVAL,
   setUpdated: setUpdated,
   isUpdated: isUpdated
 }

@@ -41,7 +41,8 @@ const H = require('./haiku.js');
 const fs = require('fs');
 // We need to include our configuration file
 var T = new Twit(require('./config.js').twitter);
-var DEBUG = require('./config.js').DEBUG;
+const DEBUG = require('./config.js').DEBUG;
+const INTERVAL = require('./config.js').INTERVAL;
 var updated = function() {return require('./config.js').isUpdated()};
 
 function tweet(text, ops = {}) {
@@ -169,7 +170,7 @@ function updatedVersionTweet() {
 }
 
 function hoursToMs(hours) {
-	return hours * 1000 * 60 * 60;
+	return Math.floor(hours * 1000 * 60 * 60);
 }
 
 function takeRandomAction(history) {
@@ -203,8 +204,10 @@ function takeRandomAction(history) {
 }
 
 var main = function(history) {
+	console.log(INTERVAL);
+	console.log(DEBUG);
 	takeRandomAction(history);
-	setInterval(() => takeRandomAction(history), hoursToMs(1));
+	setInterval(() => takeRandomAction(history), hoursToMs(INTERVAL));
 	return history;
 }
 
