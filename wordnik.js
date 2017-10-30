@@ -2,6 +2,7 @@ const rp = require('request-promise');
 const syllable = require('syllable');
 const generator = require("random-word-syllables");
 const f = require('util').format;
+const wordfilter = require('wordfilter')
 const W_KEY = require('./config').wordnik;
 const WORD_LINK = "http://api.wordnik.com:80/v4/word.json/";
 const WORDS_LINK = "http://api.wordnik.com:80/v4/words.json/";
@@ -12,6 +13,23 @@ Array.prototype.pick = function() {
   let picked = this[Math.floor(Math.random() * this.length)];
   return picked;
 }
+
+String.prototype.count = function (sub="", allowOverlapping=false) {
+    if (sub.length <= 0) return (this.length + 1);
+    var ct = 0, // the count of the
+        index = 0,
+        step = allowOverlapping ? 1 : sub.length;
+
+    while (true) {
+        index = this.indexOf(sub, index);
+        if (index >= 0) {
+            ct++;
+            index += step;
+        } else break;
+    }
+    return ct;
+}
+
 
 var getRandomWords = function(count=30, included=INCLUDE_PARTS,
     excluded=EXCLUDE_PARTS, length={min:1, max:-1}, corpFreq=1000, dictReq=2) {
@@ -49,26 +67,52 @@ var getSyllables = function(word) {
   return syllable(word);
 }
 
-var syllabizeWords = function(words) {
+var countSyllables = function(line) {
+  let words = line.split(' ');
+  let ct = 0;
+  for (let word of words) {
+    ct += getSyllables(word);
+  }
+  return ct;
+}
+
+var syllabizeWords = function(words, history) {
   let syllables = {};
   for (let word of words) {
-    let s = getSyllables(word.word);
-    if (syllables[s] === undefined) {
-      syllables[s] = [];
+    if (isSanitary(word.word, history)){
+      let s = getSyllables(word.word);
+      if (syllables[s] === undefined) {
+        syllables[s] = [];
+      }
+      syllables[s].push(word);
+    } else {
+      console.log("IGNORED@: " + word.word);
     }
-    syllables[s].push(word);
   }
   return syllables;
 }
 
-var sortBySyllables = function(wordList) {
+var isSanitary = function(word, history) {
+  let sanitary = true;
+  if (history) {
+    sanitary = sanitary && !(word in history.words.blacklist);
+  }
+  sanitary = sanitary && !(wordfilter.blacklisted(word));
+  return sanitary;
+}
+
+var sortBySyllables = function(wordList, history) {
   let bySyll = {};
   for (let word of wordList) {
-    let s = syllable(word);
-    if (bySyll[s] === undefined) {
-      bySyll[s] = [];
+    if (isSanitary(word, history)) {
+      let s = syllable(word);
+      if (bySyll[s] === undefined) {
+        bySyll[s] = [];
+      }
+      bySyll[s].push(word);
+    } else {
+      console.log("IGNORED!: " + word);
     }
-    bySyll[s].push(word);
   }
   return bySyll;
 }
@@ -177,5 +221,5 @@ var generateAssociatedWords = function(word) {
 }
 module.exports = {
   getRandomWords, sortBySyllables, generator, getVerbs, getAdverbs, getNouns,
-  getAdjectives, syllabizeWords
+  getAdjectives, syllabizeWords, countSyllables
 }

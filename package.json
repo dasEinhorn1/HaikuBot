@@ -18,13 +18,15 @@
   },
   "homepage": "https://github.com/dasEinhorn1/StarshipCaptainBot#readme",
   "dependencies": {
+    "fs-then": "^0.2.0",
     "google-translate-api": "^2.3.0",
     "mongodb": "^2.2.31",
     "random-word-syllables": "^1.0.1",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
     "syllable": "^2.2.0",
-    "twit": "^2.2.9"
+    "twit": "^2.2.9",
+    "wordfilter": "^0.2.6"
   },
   "devDependencies": {},
   "keywords": []
