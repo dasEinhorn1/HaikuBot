@@ -32,7 +32,8 @@ String.prototype.count = function (sub="", allowOverlapping=false) {
 
 
 var getRandomWords = function(count=30, included=INCLUDE_PARTS,
-    excluded=EXCLUDE_PARTS, length={min:1, max:-1}, corpFreq=1000, dictReq=2) {
+    excluded=EXCLUDE_PARTS, length={min:1, max:-1},
+    corpFreq=100000, dictReq=0) {
   let options = {
     uri: WORDS_LINK + "randomWords?",
     qs: {
@@ -172,7 +173,7 @@ var getAdjectives = function(count=100) {
 }
 
 var getNouns = function(count=1000, length = 15) {
-  return getRandomWords(count, "noun", "verb", {max:length, min: 3}, 10000)
+  return getRandomWords(count, "noun", "verb", {max:length, min: 3})
     .then(nouns => {
       return nouns.filter(noun => {
         return !/^[A-Z]/.test(noun.word);
@@ -181,22 +182,21 @@ var getNouns = function(count=1000, length = 15) {
 }
 
 var getVerbs = function(count=1000, length = 15) {
-  return getRandomWords(count, "verb", "noun", {max:length, min: 2}, 10)
+  return getRandomWords(count, "verb", "noun", {max:length, min: 2})
     .then(verbs => {
       return verbs;
     });
 }
 
 var getAdverbs = function(count=1000, length=15) {
-  return getRandomWords(count, "adverb", "noun", {max:length, min: 2}, 10000)
+  return getRandomWords(count, "adverb", "noun", {max:length, min: 2})
     .then(adverbs => {
       return adverbs;
     });
 }
 
 var getPrepositions = function(count=30, length=8) {
-  return getRandomWords(count, "preposition", "", {max:length, min: 2},
-    10000, 50)
+  return getRandomWords(count, "preposition", "", {max:length, min: 2})
     .then(preps => {
       return preps;
     });
